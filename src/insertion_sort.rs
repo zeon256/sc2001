@@ -3,12 +3,12 @@ use crate::Sort;
 /// # Time Complexity
 /// - Best Case: O(n)
 /// - Worst Case: O(n^2)
-/// 
+///
 /// # Space Complexity
 /// - O(1) since no auxiliary data structures were used
 pub struct InsertionSort;
 
-impl Sort for InsertionSort {    
+impl Sort for InsertionSort {
     fn sort<T: Copy + Ord>(buf: &mut [T]) {
         // we go through every element
         for i in 0..buf.len() {
@@ -17,9 +17,7 @@ impl Sort for InsertionSort {
             for j in (1..=i).rev() {
                 if buf[j] < buf[j - 1] {
                     // swap
-                    let t = buf[j - 1];
-                    buf[j - 1] = buf[j];
-                    buf[j] = t;
+                    buf.swap(j, j - 1)
                 } else {
                     break;
                 }

@@ -61,7 +61,7 @@ fn criterion_benchmark(c: &mut Criterion) {
     c.bench_function("insertion_merge_sort 10mill", |b| {
         b.iter_batched(
             || rand_array_10mill.clone(),
-            |mut data| InsertionMergeSort::<10>::sort(&mut data),
+            |mut data| InsertionMergeSort::<20>::sort(&mut data),
             BatchSize::LargeInput,
         )
     });

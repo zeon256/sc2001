@@ -28,7 +28,7 @@ mod test {
     );
 
     fn gen_random_array<const N: usize>() -> Vec<u32> {
-        let mut rng = WyRand::new_seed(420);
+        let mut rng = WyRand::new();
         (0..N).map(|_| rng.generate()).collect::<Vec<_>>()
     }
 
@@ -41,6 +41,15 @@ mod test {
         let (mut data, exp) = ARRAY_1.clone();
         InsertionSort::sort(&mut data);
         assert_eq!(data, exp);
+    }
+
+    #[test]
+    fn test_insertion_sort_random() {
+        let mut data = gen_random_array::<1000>();
+        let mut data2 = data.clone();
+        InsertionSort::sort(&mut data);
+        data2.sort_unstable();
+        assert_eq!(data, data2);
     }
 
     #[test]
@@ -74,7 +83,18 @@ mod test {
         assert_eq!(data, exp);
 
         let (mut data, exp) = ARRAY_2.clone();
-        InsertionMergeSort::<10>::sort(&mut data);
-        assert_eq!(data, exp);
+        let mut data2 = data.clone();
+        InsertionMergeSort::<20>::sort(&mut data);
+        data2.sort();
+        assert_eq!(data, data2);
+    }
+
+    #[test]
+    fn test_insertion_merge_sort_random() {
+        let mut data = gen_random_array::<1000>();
+        let mut data2 = data.clone();
+        InsertionMergeSort::<20>::sort(&mut data);
+        data2.sort_unstable();
+        assert_eq!(data, data2);
     }
 }
