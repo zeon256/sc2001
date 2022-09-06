@@ -13,10 +13,10 @@ pub trait Sort {
 #[cfg(test)]
 #[allow(unused_imports)]
 mod test {
-    use nanorand::{WyRand, Rng};
+    use nanorand::{Rng, WyRand};
 
     use crate::{
-        djikstra::*, heap_sort::*, insertion_merge::InsertionMergeSort, insertion_sort::*,
+        djikstra::*, heap_sort::*, insertion_merge::{InsertionMergeSort, InsertionMergeSort2}, insertion_sort::*,
         merge_sort::*, quicksort::*, Sort,
     };
 
@@ -94,6 +94,15 @@ mod test {
         let mut data = gen_random_array::<1000>();
         let mut data2 = data.clone();
         InsertionMergeSort::<20>::sort(&mut data);
+        data2.sort_unstable();
+        assert_eq!(data, data2);
+    }
+
+    #[test]
+    fn test_insertion_merge_sort2_random() {
+        let mut data = gen_random_array::<1000>();
+        let mut data2 = data.clone();
+        InsertionMergeSort2::<20>::sort(&mut data);
         data2.sort_unstable();
         assert_eq!(data, data2);
     }
