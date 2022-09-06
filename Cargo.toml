@@ -7,6 +7,10 @@ edition = "2021"
 [dependencies]
 mimalloc = { version = "*", default-features = false }
 
+[profile.release]
+lto = true
+codegen-units = 1
+
 [dev-dependencies]
 criterion = "0.3"
 nanorand = "0.7.0"

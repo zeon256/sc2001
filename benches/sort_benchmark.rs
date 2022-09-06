@@ -1,27 +1,69 @@
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use criterion::{black_box, criterion_group, criterion_main, BatchSize, Criterion};
 use mimalloc::MiMalloc;
-use nanorand::{WyRand, Rng};
-use sc2001::{insertion_sort::InsertionSort, Sort};
+use nanorand::{Rng, WyRand};
+use sc2001::{insertion_sort::InsertionSort, Sort, merge_sort::MergeSort};
 
 #[global_allocator]
 static GLOBAL: MiMalloc = MiMalloc;
 
-fn gen_random_array() -> Vec<i32> {
+fn gen_random_array<const N: usize>() -> Vec<i32> {
     let mut rng = WyRand::new_seed(420);
-    let mut buf = vec![0; 1_000_000];
-    for i in 0..1_000_000 {
-        buf[i] = rng.generate();
-    }
-    println!("Generation complete!");
-    buf
+    (0..N).map(|_| rng.generate()).collect::<Vec<_>>()
 }
 
 fn criterion_benchmark(c: &mut Criterion) {
-    let mut rand_array_0 = gen_random_array();
-    // let mut rand_array_1 = rand_array_0.clone();
-    // let mut random_array = vec![1, 7, 3, 2, 1, 5];
-    c.bench_function("insertion 1_000_000", |b| {
-        b.iter(|| InsertionSort::sort(black_box(&mut rand_array_0)))
+    let rand_array_1th = gen_random_array::<1000>();
+    let rand_array_10th = gen_random_array::<1_0000>();
+    let rand_array_100th = gen_random_array::<1_00000>();
+    let rand_array_1mill = gen_random_array::<1_000_000>();
+    let rand_array_10mill = gen_random_array::<10_000_000>();
+
+    // c.bench_function("insertion 1_000_000", |b| {
+    //     b.iter_batched(
+    //         || rand_array.clone(),
+    //         |mut data| InsertionSort::sort(&mut data),
+    //         BatchSize::LargeInput,
+    //     )
+    // });
+
+    c.bench_function("std_unstable 1000_000", |b| {
+        b.iter_batched(
+            || rand_array_1mill.clone(),
+            |mut data| data.sort_unstable(),
+            BatchSize::LargeInput,
+        )
+    });
+
+    c.bench_function("merge_sort 1000", |b| {
+        b.iter_batched(
+            || rand_array_1th.clone(),
+            |mut data| MergeSort::sort(&mut data),
+            BatchSize::LargeInput,
+        )
+    });
+
+    c.bench_function("merge_sort 10000", |b| {
+        b.iter_batched(
+            || rand_array_10th.clone(),
+            |mut data| MergeSort::sort(&mut data),
+            BatchSize::LargeInput,
+        )
+    });
+
+    c.bench_function("merge_sort 100000", |b| {
+        b.iter_batched(
+            || rand_array_100th.clone(),
+            |mut data| MergeSort::sort(&mut data),
+            BatchSize::LargeInput,
+        )
+    });
+
+    c.bench_function("merge_sort 1000_000", |b| {
+        b.iter_batched(
+            || rand_array_1mill.clone(),
+            |mut data| MergeSort::sort(&mut data),
+            BatchSize::LargeInput,
+        )
     });
 }
 
