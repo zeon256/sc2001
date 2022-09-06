@@ -13,6 +13,8 @@ pub trait Sort {
 #[cfg(test)]
 #[allow(unused_imports)]
 mod test {
+    use nanorand::{WyRand, Rng};
+
     use crate::{
         djikstra::*, heap_sort::*, insertion_merge::InsertionMergeSort, insertion_sort::*,
         merge_sort::*, quicksort::*, Sort,
@@ -24,6 +26,11 @@ mod test {
         [1, 7, 3, 2, 1, 5, 1, 7, 3, 2, 1, 5],
         [1, 1, 1, 1, 2, 2, 3, 3, 5, 5, 7, 7],
     );
+
+    fn gen_random_array<const N: usize>() -> Vec<u32> {
+        let mut rng = WyRand::new_seed(420);
+        (0..N).map(|_| rng.generate()).collect::<Vec<_>>()
+    }
 
     #[test]
     fn test_insertion_sort() {
@@ -45,6 +52,15 @@ mod test {
         let (mut data, exp) = ARRAY_1.clone();
         MergeSort::sort(&mut data);
         assert_eq!(data, exp);
+    }
+
+    #[test]
+    fn test_merge_sort_random() {
+        let mut data = gen_random_array::<1000>();
+        let mut data2 = data.clone();
+        MergeSort::sort(&mut data);
+        data2.sort_unstable();
+        assert_eq!(data, data2);
     }
 
     #[test]
