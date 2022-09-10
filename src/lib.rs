@@ -8,7 +8,7 @@ pub mod merge_sort;
 pub mod quicksort;
 
 pub trait Sort {
-    fn sort<T: Ord>(buf: &mut [T]);
+    fn sort<T: Ord + Copy>(buf: &mut [T]);
 }
 
 #[cfg(test)]
@@ -135,12 +135,6 @@ mod test {
         QuickSort::sort(&mut data);
         data2.sort_unstable();
         assert_eq!(data, data2);
-    }
-
-    #[test]
-    fn test_heapify() {
-        let mut data = vec![1, 2, 3, 4, 5, 6];
-        HeapSort::heapify(&mut data);
     }
 
     #[test]

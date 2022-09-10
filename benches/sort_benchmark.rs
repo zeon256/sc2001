@@ -1,7 +1,7 @@
 use criterion::{criterion_group, criterion_main, BatchSize, Criterion};
 use mimalloc::MiMalloc;
 use nanorand::{Rng, WyRand};
-use sc2001::{insertion_merge::InsertionMergeSort, merge_sort::MergeSort, quicksort::QuickSort};
+use sc2001::{insertion_merge::InsertionMergeSort, merge_sort::MergeSort, quicksort::QuickSort, heap_sort::HeapSort};
 
 #[global_allocator]
 static GLOBAL: MiMalloc = MiMalloc;
@@ -32,6 +32,14 @@ fn criterion_benchmark(c: &mut Criterion) {
         b.iter_batched(
             || rand_array_10th.clone(),
             |mut data| MergeSort::sort(&mut data),
+            BatchSize::LargeInput,
+        )
+    });
+
+    c.bench_function("heap_sort 10000", |b| {
+        b.iter_batched(
+            || rand_array_10th.clone(),
+            |mut data| HeapSort::sort(&mut data),
             BatchSize::LargeInput,
         )
     });
