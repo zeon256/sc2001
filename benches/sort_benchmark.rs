@@ -1,9 +1,7 @@
-use criterion::{black_box, criterion_group, criterion_main, BatchSize, Criterion};
+use criterion::{criterion_group, criterion_main, BatchSize, Criterion};
 use mimalloc::MiMalloc;
 use nanorand::{Rng, WyRand};
-use sc2001::{
-    insertion_merge::{InsertionMergeSort, InsertionMergeSort2}, insertion_sort::InsertionSort, merge_sort::MergeSort, Sort,
-};
+use sc2001::{insertion_merge::InsertionMergeSort, merge_sort::MergeSort, quicksort::QuickSort};
 
 #[global_allocator]
 static GLOBAL: MiMalloc = MiMalloc;
@@ -20,18 +18,28 @@ fn criterion_benchmark(c: &mut Criterion) {
     let rand_array_1mill = gen_random_array::<1_000_000>();
     let rand_array_10mill = gen_random_array::<10_000_000>();
 
-    c.bench_function("merge_sort 1000", |b| {
-        b.iter_batched(
-            || rand_array_1th.clone(),
-            |mut data| MergeSort::sort(&mut data),
-            BatchSize::LargeInput,
-        )
-    });
+    let aux_buf = Vec::with_capacity(1000);
+
+    // c.bench_function("merge_sort 1000", |b| {
+    //     b.iter_batched(
+    //         || rand_array_1th.clone(),
+    //         |mut data| MergeSort::sort(&mut data),
+    //         BatchSize::LargeInput,
+    //     )
+    // });
 
     c.bench_function("merge_sort 10000", |b| {
         b.iter_batched(
             || rand_array_10th.clone(),
             |mut data| MergeSort::sort(&mut data),
+            BatchSize::LargeInput,
+        )
+    });
+
+    c.bench_function("quick_sort 10000", |b| {
+        b.iter_batched(
+            || rand_array_10th.clone(),
+            |mut data| QuickSort::sort(&mut data),
             BatchSize::LargeInput,
         )
     });
@@ -52,6 +60,14 @@ fn criterion_benchmark(c: &mut Criterion) {
         )
     });
 
+    c.bench_function("quick_sort 1mill", |b| {
+        b.iter_batched(
+            || rand_array_1mill.clone(),
+            |mut data| QuickSort::sort(&mut data),
+            BatchSize::LargeInput,
+        )
+    });
+
     c.bench_function("merge_sort 10mill", |b| {
         b.iter_batched(
             || rand_array_10mill.clone(),
@@ -62,21 +78,21 @@ fn criterion_benchmark(c: &mut Criterion) {
 
     c.bench_function("insertion_merge_sort 10mill", |b| {
         b.iter_batched(
-            || rand_array_10mill.clone(),
-            |mut data| InsertionMergeSort::<20>::sort(&mut data),
+            || (rand_array_10mill.clone(), aux_buf.clone()),
+            |(mut data, mut aux_buf)| InsertionMergeSort::<20>::sort(&mut data, &mut aux_buf),
             BatchSize::LargeInput,
         )
     });
 
-    c.bench_function("insertion_merge_sort2 10mill", |b| {
+    c.bench_function("quicksort 10mill", |b| {
         b.iter_batched(
             || rand_array_10mill.clone(),
-            |mut data| InsertionMergeSort2::<20>::sort(&mut data),
+            |mut data| QuickSort::sort(&mut data),
             BatchSize::LargeInput,
         )
     });
 
-    c.bench_function("std_unstable 10mil", |b| {
+    c.bench_function("pdqsort_std 10mil", |b| {
         b.iter_batched(
             || rand_array_10mill.clone(),
             |mut data| data.sort_unstable(),

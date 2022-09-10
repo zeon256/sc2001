@@ -1,4 +1,5 @@
 #![allow(dead_code)]
+
 pub mod djikstra;
 pub mod heap_sort;
 pub mod insertion_merge;
@@ -7,7 +8,7 @@ pub mod merge_sort;
 pub mod quicksort;
 
 pub trait Sort {
-    fn sort<T: Copy + Ord>(buf: &mut [T]);
+    fn sort<T: Ord>(buf: &mut [T]);
 }
 
 #[cfg(test)]
@@ -16,7 +17,7 @@ mod test {
     use nanorand::{Rng, WyRand};
 
     use crate::{
-        djikstra::*, heap_sort::*, insertion_merge::{InsertionMergeSort, InsertionMergeSort2}, insertion_sort::*,
+        djikstra::*, heap_sort::*, insertion_merge::InsertionMergeSort, insertion_sort::*,
         merge_sort::*, quicksort::*, Sort,
     };
 
@@ -74,17 +75,18 @@ mod test {
 
     #[test]
     fn test_insertion_merge_sort() {
+        let mut aux_buf = vec![];
         let (mut data, exp) = ARRAY_0.clone();
-        InsertionMergeSort::<10>::sort(&mut data);
+        InsertionMergeSort::<10>::sort(&mut data, &mut aux_buf);
         assert_eq!(data, exp);
 
         let (mut data, exp) = ARRAY_1.clone();
-        InsertionMergeSort::<10>::sort(&mut data);
+        InsertionMergeSort::<10>::sort(&mut data, &mut aux_buf);
         assert_eq!(data, exp);
 
-        let (mut data, exp) = ARRAY_2.clone();
+        let (mut data, _) = ARRAY_2.clone();
         let mut data2 = data.clone();
-        InsertionMergeSort::<20>::sort(&mut data);
+        InsertionMergeSort::<5>::sort(&mut data, &mut aux_buf);
         data2.sort();
         assert_eq!(data, data2);
     }
@@ -93,16 +95,59 @@ mod test {
     fn test_insertion_merge_sort_random() {
         let mut data = gen_random_array::<1000>();
         let mut data2 = data.clone();
-        InsertionMergeSort::<20>::sort(&mut data);
+        let mut aux_buf = vec![];
+        InsertionMergeSort::<20>::sort(&mut data, &mut aux_buf);
         data2.sort_unstable();
         assert_eq!(data, data2);
     }
 
     #[test]
-    fn test_insertion_merge_sort2_random() {
+    fn test_quicksort_random_1000() {
         let mut data = gen_random_array::<1000>();
         let mut data2 = data.clone();
-        InsertionMergeSort2::<20>::sort(&mut data);
+        QuickSort::sort(&mut data);
+        data2.sort_unstable();
+        assert_eq!(data, data2);
+    }
+
+    #[test]
+    fn test_quicksort_random_1mill() {
+        let mut data = gen_random_array::<1000000>();
+        let mut data2 = data.clone();
+        QuickSort::sort(&mut data);
+        data2.sort_unstable();
+        assert_eq!(data, data2);
+    }
+
+    #[test]
+    fn test_quicksort_random_10thousand() {
+        let mut data = gen_random_array::<10000>();
+        let mut data2 = data.clone();
+        QuickSort::sort(&mut data);
+        data2.sort_unstable();
+        assert_eq!(data, data2);
+    }
+
+    #[test]
+    fn test_quicksort_random_100thousand() {
+        let mut data = gen_random_array::<100000>();
+        let mut data2 = data.clone();
+        QuickSort::sort(&mut data);
+        data2.sort_unstable();
+        assert_eq!(data, data2);
+    }
+
+    #[test]
+    fn test_heapify() {
+        let mut data = vec![1, 2, 3, 4, 5, 6];
+        HeapSort::heapify(&mut data);
+    }
+
+    #[test]
+    fn test_heapsort_random_1000() {
+        let mut data = gen_random_array::<1000>();
+        let mut data2 = data.clone();
+        HeapSort::sort(&mut data);
         data2.sort_unstable();
         assert_eq!(data, data2);
     }

@@ -9,7 +9,7 @@ use crate::Sort;
 pub struct InsertionSort;
 
 impl Sort for InsertionSort {
-    fn sort<T: Copy + Ord>(buf: &mut [T]) {
+    fn sort<T: Ord>(buf: &mut [T]) {
         // we go through every element
         for i in 0..buf.len() {
             // for 1 subsequent element, we keep swapping when curr is smaller than previous element
