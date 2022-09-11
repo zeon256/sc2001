@@ -36,14 +36,6 @@ fn criterion_benchmark(c: &mut Criterion) {
         )
     });
 
-    c.bench_function("heap_sort 10000", |b| {
-        b.iter_batched(
-            || rand_array_10th.clone(),
-            |mut data| HeapSort::sort(&mut data),
-            BatchSize::LargeInput,
-        )
-    });
-
     c.bench_function("quick_sort 10000", |b| {
         b.iter_batched(
             || rand_array_10th.clone(),
@@ -52,6 +44,15 @@ fn criterion_benchmark(c: &mut Criterion) {
         )
     });
 
+    c.bench_function("heap_sort 10000", |b| {
+        b.iter_batched(
+            || rand_array_10th.clone(),
+            |mut data| HeapSort::sort(&mut data),
+            BatchSize::LargeInput,
+        )
+    });
+
+
     c.bench_function("merge_sort 100000", |b| {
         b.iter_batched(
             || rand_array_100th.clone(),
@@ -59,6 +60,15 @@ fn criterion_benchmark(c: &mut Criterion) {
             BatchSize::LargeInput,
         )
     });
+
+    c.bench_function("heap_sort 100000", |b| {
+        b.iter_batched(
+            || rand_array_100th.clone(),
+            |mut data| HeapSort::sort(&mut data),
+            BatchSize::LargeInput,
+        )
+    });
+
 
     c.bench_function("merge_sort 1mill", |b| {
         b.iter_batched(
@@ -72,6 +82,14 @@ fn criterion_benchmark(c: &mut Criterion) {
         b.iter_batched(
             || rand_array_1mill.clone(),
             |mut data| QuickSort::sort(&mut data),
+            BatchSize::LargeInput,
+        )
+    });
+
+    c.bench_function("heap_sort 1mill", |b| {
+        b.iter_batched(
+            || rand_array_1mill.clone(),
+            |mut data| HeapSort::sort(&mut data),
             BatchSize::LargeInput,
         )
     });
@@ -96,6 +114,14 @@ fn criterion_benchmark(c: &mut Criterion) {
         b.iter_batched(
             || rand_array_10mill.clone(),
             |mut data| QuickSort::sort(&mut data),
+            BatchSize::LargeInput,
+        )
+    });
+
+    c.bench_function("heap_sort 10mill", |b| {
+        b.iter_batched(
+            || rand_array_10mill.clone(),
+            |mut data| HeapSort::sort(&mut data),
             BatchSize::LargeInput,
         )
     });
