@@ -6,9 +6,10 @@ pub mod insertion_merge;
 pub mod insertion_sort;
 pub mod merge_sort;
 pub mod quicksort;
+pub mod min_max_search;
 
 pub trait Sort {
-    fn sort<T: Ord>(buf: &mut [T]);
+    fn sort<T: Ord + Copy>(buf: &mut [T]);
 }
 
 #[cfg(test)]
@@ -28,30 +29,11 @@ mod test {
         [1, 1, 1, 1, 2, 2, 3, 3, 5, 5, 7, 7],
     );
 
-    fn gen_random_array<const N: usize>() -> Vec<u32> {
+    pub fn gen_random_array<const N: usize>() -> Vec<u32> {
         let mut rng = WyRand::new();
         (0..N).map(|_| rng.generate()).collect::<Vec<_>>()
     }
 
-    #[test]
-    fn test_insertion_sort() {
-        let (mut data, exp) = ARRAY_0.clone();
-        InsertionSort::sort(&mut data);
-        assert_eq!(data, exp);
-
-        let (mut data, exp) = ARRAY_1.clone();
-        InsertionSort::sort(&mut data);
-        assert_eq!(data, exp);
-    }
-
-    #[test]
-    fn test_insertion_sort_random() {
-        let mut data = gen_random_array::<1000>();
-        let mut data2 = data.clone();
-        InsertionSort::sort(&mut data);
-        data2.sort_unstable();
-        assert_eq!(data, data2);
-    }
 
     #[test]
     fn test_merge_sort() {
@@ -135,12 +117,6 @@ mod test {
         QuickSort::sort(&mut data);
         data2.sort_unstable();
         assert_eq!(data, data2);
-    }
-
-    #[test]
-    fn test_heapify() {
-        let mut data = vec![1, 2, 3, 4, 5, 6];
-        HeapSort::heapify(&mut data);
     }
 
     #[test]
