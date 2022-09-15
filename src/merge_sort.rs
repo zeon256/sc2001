@@ -1,4 +1,3 @@
-
 /// # Time Complexity
 /// - Best Case: O(nlgn)
 /// - Worst Case: O(nlgn)
@@ -9,11 +8,9 @@ pub struct MergeSort;
 
 impl MergeSort {
     pub fn merge<T: Copy + Ord>(l: &mut [T], r: &mut [T]) {
-        let sz = l.len() + r.len();
+        let (sz, mut l_i, mut r_i) = (l.len() + r.len(), 0, 0);
 
         let mut aux_buf = Vec::with_capacity(sz);
-        let mut l_i = 0;
-        let mut r_i = 0;
 
         // loop until the shorter array ends
         // we simply push the element by comparing the first of each
@@ -57,12 +54,11 @@ impl MergeSort {
             aux_i += 1;
         }
     }
-    
+
     pub fn merge_prealloc<T: Copy + Ord>(l: &mut [T], r: &mut [T], aux_buf: &mut Vec<T>) {
         aux_buf.clear();
-        
-        let mut l_i = 0;
-        let mut r_i = 0;
+
+        let (mut l_i, mut r_i) = (0, 0);
 
         // loop until the shorter array ends
         // we simply push the element by comparing the first of each
@@ -79,13 +75,12 @@ impl MergeSort {
         }
 
         // copy remaining
+        // one of these 2 loops wont run since the condition for the above for
+        // loop exits
         for i in l_i..l.len() {
             aux_buf.push(l[i]);
         }
 
-        // copy remaining
-        // one of these 2 loops wont run since the condition for the above for
-        // loop exits
         for i in r_i..r.len() {
             aux_buf.push(r[i]);
         }

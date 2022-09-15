@@ -21,7 +21,7 @@ fn criterion_benchmark(c: &mut Criterion) {
     let rand_array_1mill = gen_random_array::<1_000_000>();
     let rand_array_10mill = gen_random_array::<10_000_000>();
 
-    let aux_buf = Vec::with_capacity(1000);
+    let aux_buf = Vec::with_capacity(100000);
 
     // c.bench_function("merge_sort 1000", |b| {
     //     b.iter_batched(

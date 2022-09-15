@@ -35,7 +35,43 @@ impl QuickSort {
         if !buf.is_empty() {
             let pivot_idx = Self::partition(buf);
             QuickSort::sort(&mut buf[0..pivot_idx]);
-            QuickSort::sort(&mut buf[pivot_idx+1..]);
+            QuickSort::sort(&mut buf[pivot_idx + 1..]);
         }
     }
+}
+
+#[cfg(test)]
+mod test {
+    use crate::test::{gen_random_array, assert_sorted};
+
+    use super::QuickSort;
+
+    #[test]
+    fn test_quicksort_random_1k() {
+        let mut data = gen_random_array::<1000>();
+        QuickSort::sort(&mut data);
+        assert_sorted(&data);
+    }
+
+    #[test]
+    fn test_quicksort_random_10k() {
+        let mut data = gen_random_array::<10000>();
+        QuickSort::sort(&mut data);
+        assert_sorted(&data);
+    }
+
+    #[test]
+    fn test_quicksort_random_100k() {
+        let mut data = gen_random_array::<100000>();
+        QuickSort::sort(&mut data);
+        assert_sorted(&data);
+    }
+
+    #[test]
+    fn test_quicksort_random_1mill() {
+        let mut data = gen_random_array::<1000000>();
+        QuickSort::sort(&mut data);
+        assert_sorted(&data);
+    }
+
 }
