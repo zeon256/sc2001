@@ -21,7 +21,7 @@ fn criterion_benchmark(c: &mut Criterion) {
     let rand_array_1mill = gen_random_array::<1_000_000>();
     let rand_array_10mill = gen_random_array::<10_000_000>();
 
-    let aux_buf = Vec::with_capacity(100000);
+    // let aux_buf = Vec::with_capacity(100000);
 
     // c.bench_function("merge_sort 1000", |b| {
     //     b.iter_batched(
@@ -47,109 +47,111 @@ fn criterion_benchmark(c: &mut Criterion) {
     //     )
     // });
 
-    c.bench_function("heap_sort 10000", |b| {
-        b.iter_batched(
-            || rand_array_10th.clone(),
-            |mut data| HeapSort::sort(&mut data),
-            BatchSize::LargeInput,
-        )
-    });
+    // c.bench_function("heap_sort 10000", |b| {
+    //     b.iter_batched(
+    //         || rand_array_10th.clone(),
+    //         |mut data| HeapSort::sort(&mut data),
+    //         BatchSize::LargeInput,
+    //     )
+    // });
 
-    c.bench_function("merge_sort 100000", |b| {
-        b.iter_batched(
-            || rand_array_100th.clone(),
-            |mut data| MergeSort::sort(&mut data),
-            BatchSize::LargeInput,
-        )
-    });
+    // c.bench_function("merge_sort 100000", |b| {
+    //     b.iter_batched(
+    //         || rand_array_100th.clone(),
+    //         |mut data| MergeSort::sort(&mut data),
+    //         BatchSize::LargeInput,
+    //     )
+    // });
 
-    c.bench_function("insertion_merge_sort 100000", |b| {
-        b.iter_batched(
-            || rand_array_1mill.clone(),
-            |mut data| MergeSort::sort(&mut data),
-            BatchSize::LargeInput,
-        )
-    });
+    // c.bench_function("insertion_merge_sort 100000", |b| {
+    //     b.iter_batched(
+    //         || rand_array_1mill.clone(),
+    //         |mut data| MergeSort::sort(&mut data),
+    //         BatchSize::LargeInput,
+    //     )
+    // });
 
-    c.bench_function("heap_sort 100000", |b| {
-        b.iter_batched(
-            || rand_array_100th.clone(),
-            |mut data| HeapSort::sort(&mut data),
-            BatchSize::LargeInput,
-        )
-    });
+    // c.bench_function("heap_sort 100000", |b| {
+    //     b.iter_batched(
+    //         || rand_array_100th.clone(),
+    //         |mut data| HeapSort::sort(&mut data),
+    //         BatchSize::LargeInput,
+    //     )
+    // });
 
-    c.bench_function("quick_sort 1mill", |b| {
-        b.iter_batched(
-            || rand_array_1mill.clone(),
-            |mut data| QuickSort::sort(&mut data),
-            BatchSize::LargeInput,
-        )
-    });
+    // c.bench_function("quick_sort 1mill", |b| {
+    //     b.iter_batched(
+    //         || rand_array_1mill.clone(),
+    //         |mut data| QuickSort::sort(&mut data),
+    //         BatchSize::LargeInput,
+    //     )
+    // });
 
-    c.bench_function("heap_sort 1mill", |b| {
-        b.iter_batched(
-            || rand_array_1mill.clone(),
-            |mut data| HeapSort::sort(&mut data),
-            BatchSize::LargeInput,
-        )
-    });
+    // c.bench_function("heap_sort 1mill", |b| {
+    //     b.iter_batched(
+    //         || rand_array_1mill.clone(),
+    //         |mut data| HeapSort::sort(&mut data),
+    //         BatchSize::LargeInput,
+    //     )
+    // });
 
-    c.bench_function("merge_sort 1mill", |b| {
-        b.iter_batched(
-            || rand_array_1mill.clone(),
-            |mut data| MergeSort::sort(&mut data),
-            BatchSize::LargeInput,
-        )
-    });
+    // c.bench_function("merge_sort 1mill", |b| {
+    //     b.iter_batched(
+    //         || rand_array_1mill.clone(),
+    //         |mut data| MergeSort::sort(&mut data),
+    //         BatchSize::LargeInput,
+    //     )
+    // });
 
-    c.bench_function("insertion_merge_sort 1mill", |b| {
-        b.iter_batched(
-            || (rand_array_1mill.clone(), aux_buf.clone()),
-            |(mut data, mut aux_buf)| InsertionMergeSort::<20>::sort(&mut data, &mut aux_buf),
-            BatchSize::LargeInput,
-        )
-    });
+    for sz in 3..=128 {
+        c.bench_function(&format!("insertion_merge_sort 1mill S = {}", sz), |b| {
+            b.iter_batched(
+                || rand_array_1mill.clone(),
+                |mut data| InsertionMergeSort::sort(&mut data, sz),
+                BatchSize::LargeInput,
+            )
+        });
+    }
 
-    c.bench_function("insertion_merge_sort 10mill", |b| {
-        b.iter_batched(
-            || (rand_array_10mill.clone(), aux_buf.clone()),
-            |(mut data, mut aux_buf)| InsertionMergeSort::<20>::sort(&mut data, &mut aux_buf),
-            BatchSize::LargeInput,
-        )
-    });
+    // c.bench_function("insertion_merge_sort 10mill S = 65", |b| {
+    //     b.iter_batched(
+    //         || rand_array_10mill.clone(),
+    //         |mut data| InsertionMergeSort::<65>::sort(&mut data),
+    //         BatchSize::LargeInput,
+    //     )
+    // });
 
-    c.bench_function("merge_sort 10mill", |b| {
-        b.iter_batched(
-            || rand_array_10mill.clone(),
-            |mut data| MergeSort::sort(&mut data),
-            BatchSize::LargeInput,
-        )
-    });
+    // c.bench_function("merge_sort 10mill", |b| {
+    //     b.iter_batched(
+    //         || rand_array_10mill.clone(),
+    //         |mut data| MergeSort::sort(&mut data),
+    //         BatchSize::LargeInput,
+    //     )
+    // });
 
-    c.bench_function("quicksort 10mill", |b| {
-        b.iter_batched(
-            || rand_array_10mill.clone(),
-            |mut data| QuickSort::sort(&mut data),
-            BatchSize::LargeInput,
-        )
-    });
+    // c.bench_function("quicksort 10mill", |b| {
+    //     b.iter_batched(
+    //         || rand_array_10mill.clone(),
+    //         |mut data| QuickSort::sort(&mut data),
+    //         BatchSize::LargeInput,
+    //     )
+    // });
 
-    c.bench_function("heap_sort 10mill", |b| {
-        b.iter_batched(
-            || rand_array_10mill.clone(),
-            |mut data| HeapSort::sort(&mut data),
-            BatchSize::LargeInput,
-        )
-    });
+    // c.bench_function("heap_sort 10mill", |b| {
+    //     b.iter_batched(
+    //         || rand_array_10mill.clone(),
+    //         |mut data| HeapSort::sort(&mut data),
+    //         BatchSize::LargeInput,
+    //     )
+    // });
 
-    c.bench_function("pdqsort_std 10mill", |b| {
-        b.iter_batched(
-            || rand_array_10mill.clone(),
-            |mut data| data.sort_unstable(),
-            BatchSize::LargeInput,
-        )
-    });
+    // c.bench_function("pdqsort_std 10mill", |b| {
+    //     b.iter_batched(
+    //         || rand_array_10mill.clone(),
+    //         |mut data| data.sort_unstable(),
+    //         BatchSize::LargeInput,
+    //     )
+    // });
 }
 
 criterion_group!(benches, criterion_benchmark);

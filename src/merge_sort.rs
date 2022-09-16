@@ -117,3 +117,17 @@ impl MergeSort {
         Self::merge(l_buf, r_buf);
     }
 }
+
+#[cfg(test)]
+mod test {
+    use crate::test::{gen_random_array, assert_sorted};
+
+    use super::MergeSort;
+
+    #[test]
+    fn test_merge_sort_random() {
+        let mut data = gen_random_array::<10000>();
+        MergeSort::sort(&mut data);
+        assert_sorted(&data);
+    }
+}
