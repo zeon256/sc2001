@@ -104,7 +104,7 @@ fn criterion_benchmark(c: &mut Criterion) {
     // });
 
     for sz in 3..=512 {
-        c.bench_function(&format!("insertion_merge_sort 1mill S = {}", sz), |b| {
+        c.bench_function(&format!("insertion_merge_sort(1mill_s{})", sz), |b| {
             b.iter_batched(
                 || rand_array_1mill.clone(),
                 |mut data| InsertionMergeSort::sort(&mut data, sz),
