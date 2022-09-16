@@ -103,7 +103,7 @@ fn criterion_benchmark(c: &mut Criterion) {
     //     )
     // });
 
-    for sz in 3..=256 {
+    for sz in 3..=512 {
         c.bench_function(&format!("insertion_merge_sort 1mill S = {}", sz), |b| {
             b.iter_batched(
                 || rand_array_1mill.clone(),
