@@ -10,8 +10,11 @@ pub mod quicksort;
 
 #[cfg(test)]
 #[allow(unused_imports)]
-mod test {
-    use std::{fs::File, io::{Read, Write}};
+pub mod test {
+    use std::{
+        fs::File,
+        io::{Read, Write},
+    };
 
     use nanorand::{RandomGen, Rng, WyRand};
     use serde::{Deserialize, Serialize};
@@ -43,8 +46,16 @@ mod test {
         upper_bound: f64,
     }
 
-    pub fn gen_random_array<const N: usize>() -> Vec<u32> {
-        let mut rng = WyRand::new();
+    pub fn gen_random_array<const N: usize, T>(seed: T) -> Vec<u32>
+    where
+        T: Into<Option<u64>>,
+    {
+        // let mut rng = WyRand::new();
+        let mut rng = match seed.into() {
+            Some(seed) => WyRand::new_seed(seed),
+            None => WyRand::new(),
+        };
+
         (0..N).map(|_| rng.generate()).collect()
     }
 
@@ -57,19 +68,30 @@ mod test {
     #[test]
     fn export_all_data_to_csv() {
         let mut all_estimates = String::from("sz,mean,median\n");
-        for sz in 3..=512 {
+        for sz in 3..=256 {
             let mut buf = String::new();
-            let file_name = format!("target/criterion/insertion_merge_sort(1mill_s{})/new/estimates.json", sz);
+            let file_name = format!(
+                "target/criterion/insertion_merge_sort(100k_s{})/new/estimates.json",
+                sz
+            );
             // let file_name = format!("target/criterion/xd/new/estimates.json");
             println!("{file_name}");
             let mut f = File::open(file_name).unwrap();
             let _ = f.read_to_string(&mut buf).unwrap();
             let estimates = serde_json::from_str::<Estimates>(&buf).unwrap();
-            let (mean, median) = (estimates.mean.point_estimate, estimates.median.point_estimate);
-            all_estimates.push_str(&format!("{},{},{}\n", sz, mean, median));
+            let (mean, median) = (
+                estimates.mean.point_estimate,
+                estimates.median.point_estimate,
+            );
+            all_estimates.push_str(&format!(
+                "{},{},{}\n",
+                sz,
+                mean / 1000000.0,
+                median / 1000000.0
+            ));
             // all_estimates.push((sz, estimates.mean.point_estimate, estimates.median.point_estimate));
         }
-        let mut f = File::create("bench.csv").unwrap();
+        let mut f = File::create("bench_100k.csv").unwrap();
         f.write_all(all_estimates.as_bytes()).unwrap();
     }
 }

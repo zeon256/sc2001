@@ -7,7 +7,7 @@
 pub struct MergeSort;
 
 impl MergeSort {
-    pub fn merge<T: Copy + Ord>(l: &mut [T], r: &mut [T]) {
+    pub fn merge<T: Copy + Ord>(l: &mut [T], r: &mut [T], #[cfg(feature = "key_cmp")] key_cmp: &mut u64) {
         let (sz, mut l_i, mut r_i) = (l.len() + r.len(), 0, 0);
 
         let mut aux_buf = Vec::with_capacity(sz);
@@ -17,6 +17,12 @@ impl MergeSort {
         // we can do this because each l and r are already sorted
         // from the base case
         while l_i < l.len() && r_i < r.len() {
+
+            #[cfg(feature = "key_cmp")]
+            {  
+                *key_cmp += 1;
+            }
+
             if l[l_i] < r[r_i] {
                 aux_buf.push(l[l_i]);
                 l_i += 1;
@@ -114,19 +120,21 @@ impl MergeSort {
 
         Self::sort(l_buf);
         Self::sort(r_buf);
+
+        #[cfg(not(feature = "key_cmp"))]
         Self::merge(l_buf, r_buf);
     }
 }
 
 #[cfg(test)]
 mod test {
-    use crate::test::{gen_random_array, assert_sorted};
+    use crate::test::{assert_sorted, gen_random_array};
 
     use super::MergeSort;
 
     #[test]
     fn test_merge_sort_random() {
-        let mut data = gen_random_array::<10000>();
+        let mut data = gen_random_array::<10000, _>(None);
         MergeSort::sort(&mut data);
         assert_sorted(&data);
     }

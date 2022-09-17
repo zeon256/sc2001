@@ -48,28 +48,28 @@ mod test {
 
     #[test]
     fn test_quicksort_random_1k() {
-        let mut data = gen_random_array::<1000>();
+        let mut data = gen_random_array::<1000, _>(None);
         QuickSort::sort(&mut data);
         assert_sorted(&data);
     }
 
     #[test]
     fn test_quicksort_random_10k() {
-        let mut data = gen_random_array::<10000>();
+        let mut data = gen_random_array::<10000, _>(None);
         QuickSort::sort(&mut data);
         assert_sorted(&data);
     }
 
     #[test]
     fn test_quicksort_random_100k() {
-        let mut data = gen_random_array::<100000>();
+        let mut data = gen_random_array::<100000, _>(None);
         QuickSort::sort(&mut data);
         assert_sorted(&data);
     }
 
     #[test]
     fn test_quicksort_random_1mill() {
-        let mut data = gen_random_array::<1000000>();
+        let mut data = gen_random_array::<1000000, _>(None);
         QuickSort::sort(&mut data);
         assert_sorted(&data);
     }
