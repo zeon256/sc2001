@@ -1,5 +1,3 @@
 /target
 .DS_Store
 s_bench
-bench_*.csv
-key_cmp_*.csv
