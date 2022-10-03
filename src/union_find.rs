@@ -100,16 +100,7 @@ pub struct WQupc;
 pub struct UnionFind<A, T> {
     id: Vec<T>,
     phantom: PhantomData<A>,
-    count: usize,
-}
-
-impl<A, T> UnionFind<A, T>
-where
-    T: PartialEq,
-{
-    pub fn count(&self) -> usize {
-        self.count
-    }
+    pub count: usize,
 }
 
 #[cfg(test)]

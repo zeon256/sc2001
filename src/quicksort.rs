@@ -42,7 +42,7 @@ impl QuickSort {
 
 #[cfg(test)]
 mod test {
-    use crate::test::{gen_random_array, assert_sorted};
+    use crate::test_utils::{gen_random_array, assert_sorted};
 
     use super::QuickSort;
 

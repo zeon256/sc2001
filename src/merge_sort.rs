@@ -171,7 +171,7 @@ impl MergeSort {
 
 #[cfg(test)]
 mod test {
-    use crate::test::{assert_sorted, gen_random_array};
+    use crate::test_utils::{assert_sorted, gen_random_array};
 
     use super::MergeSort;
 

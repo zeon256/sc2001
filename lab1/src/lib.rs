@@ -1,4 +1,4 @@
-mod insertion_merge;
+pub mod insertion_merge;
 
 #[cfg(test)]
 #[allow(unused_imports)]
@@ -32,8 +32,9 @@ pub mod test {
         lower_bound: f64,
         upper_bound: f64,
     }
-
+ 
     #[test]
+    #[ignore]
     fn export_all_data_to_csv() {
         let array_sz = ["1k", "10k", "100k", "500k", "1mill"];
 

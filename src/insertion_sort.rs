@@ -47,7 +47,7 @@ impl InsertionSort {
 mod test {
     use crate::{
         insertion_sort::InsertionSort,
-        test::{assert_sorted, gen_random_array},
+        test_utils::{assert_sorted, gen_random_array},
     };
 
     #[test]

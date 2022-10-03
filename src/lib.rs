@@ -9,9 +9,7 @@ pub mod merge_sort;
 pub mod min_max_search;
 pub mod quicksort;
 pub mod union_find;
-
-#[cfg(test)]
-mod test {
+pub mod test_utils {
     use nanorand::{WyRand, Rng};
 
     pub fn gen_random_array<const N: usize, T>(seed: T) -> Vec<u32>

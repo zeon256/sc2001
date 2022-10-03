@@ -41,7 +41,7 @@ impl InsertionMergeSort {
 mod test {
     use crate::{
         insertion_merge::InsertionMergeSort,
-        test::{assert_sorted, gen_random_array},
+        test_utils::{assert_sorted, gen_random_array},
     };
 
     #[test]

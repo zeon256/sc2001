@@ -1,4 +1,4 @@
-use crate::{insertion_sort::InsertionSort, merge_sort::MergeSort};
+use sc2001::{insertion_sort::InsertionSort, merge_sort::MergeSort};
 
 /// # Type parameter
 ///
@@ -39,10 +39,9 @@ impl InsertionMergeSort {
 
 #[cfg(test)]
 mod test {
-    use crate::{
-        insertion_merge::InsertionMergeSort,
-        test::{assert_sorted, gen_random_array},
-    };
+    use crate::insertion_merge::InsertionMergeSort;
+
+    use sc2001::test_utils::{assert_sorted, gen_random_array};
 
     #[test]
     fn test_insertion_merge_sort_random() {
@@ -52,6 +51,7 @@ mod test {
     }
 
     #[test]
+    #[ignore]
     fn key_cmp_vs_s() {
         use std::{cmp::Reverse, fs::File, io::Write};
 
