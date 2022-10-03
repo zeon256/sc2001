@@ -430,6 +430,7 @@ dependencies = [
  "criterion",
  "mimalloc",
  "nanorand",
+ "num-traits",
  "serde",
  "serde_json",
 ]

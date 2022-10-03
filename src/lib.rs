@@ -7,6 +7,8 @@ pub mod insertion_sort;
 pub mod merge_sort;
 pub mod min_max_search;
 pub mod quicksort;
+pub mod graph;
+pub mod union_find;
 
 #[cfg(test)]
 #[allow(unused_imports)]
