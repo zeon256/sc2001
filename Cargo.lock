@@ -227,6 +227,33 @@ dependencies = [
 ]
 
 [[package]]
+name = "lab1"
+version = "0.1.0"
+dependencies = [
+ "sc2001",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "lab2"
+version = "0.1.0"
+dependencies = [
+ "criterion",
+ "nanorand",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "lab3"
+version = "0.1.0"
+
+[[package]]
+name = "lab4"
+version = "0.1.0"
+
+[[package]]
 name = "lazy_static"
 version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"

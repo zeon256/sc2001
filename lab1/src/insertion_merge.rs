@@ -51,7 +51,6 @@ mod test {
         assert_sorted(&data);
     }
 
-    #[cfg(feature = "key_cmp")]
     #[test]
     fn key_cmp_vs_s() {
         use std::{cmp::Reverse, fs::File, io::Write};

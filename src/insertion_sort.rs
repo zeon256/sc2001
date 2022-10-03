@@ -7,19 +7,31 @@
 pub struct InsertionSort;
 
 impl InsertionSort {
-    pub fn sort<T: Ord>(buf: &mut [T], #[cfg(feature = "key_cmp")] key_cmp: &mut u64) {
+    pub fn sort<T: Ord>(buf: &mut [T]) {
         // we go through every element except 1 because
         // the first element is assumed to be sorted
         for i in 1..buf.len() {
             // for 1 subsequent element, we keep swapping when curr is smaller than previous element
             // keep swapping until we reach an element that is already smaller
             for j in (1..=i).rev() {
-
-                #[cfg(feature = "key_cmp")]
-                {
-                    *key_cmp += 1;
+                if buf[j] < buf[j - 1] {
+                    // swap
+                    buf.swap(j, j - 1)
+                } else {
+                    break;
                 }
+            }
+        }
+    }
 
+    pub fn sort_key_cmp<T: Ord>(buf: &mut [T], key_cmp: &mut u64) {
+        // we go through every element except 1 because
+        // the first element is assumed to be sorted
+        for i in 1..buf.len() {
+            // for 1 subsequent element, we keep swapping when curr is smaller than previous element
+            // keep swapping until we reach an element that is already smaller
+            for j in (1..=i).rev() {
+                *key_cmp += 1;
                 if buf[j] < buf[j - 1] {
                     // swap
                     buf.swap(j, j - 1)
@@ -38,7 +50,6 @@ mod test {
         test::{assert_sorted, gen_random_array},
     };
 
-    #[cfg(not(feature = "key_cmp"))]
     #[test]
     fn test_insertion_sort_random() {
         let mut data = gen_random_array::<10000, _>(None);
