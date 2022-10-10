@@ -4,7 +4,7 @@ use std::collections::BinaryHeap;
 
 use array_pq::ArrayPriorityQueue;
 use graph::{ListGraph, MatrixGraph};
-use nanorand::{WyRand, Rng};
+use nanorand::{Rng, WyRand};
 use sc2001::graph::Edge;
 
 pub mod array_pq;
@@ -165,7 +165,7 @@ where
         Some(seed) => WyRand::new_seed(seed),
         None => WyRand::new(),
     };
-    
+
     let mut rng_2 = match seed.clone() {
         Some(seed) => WyRand::new_seed(seed + 69),
         None => WyRand::new(),
@@ -176,15 +176,15 @@ where
         None => WyRand::new(),
     };
 
-
     for _ in 0..n {
         // generate random indexes
         let (i, j) = (rng.generate_range(0..n), rng_2.generate_range(0..n));
         // dont allow self loops
-        if i == j {  continue; }
+        if i == j {
+            continue;
+        }
         graph[i][j] = rng_3.generate_range(0..100);
     }
-
 
     for i in &graph {
         print!("[ ");
@@ -193,7 +193,7 @@ where
         }
         print!(" ]\n");
     }
-    
+
     MatrixGraph::from(graph)
 }
 
@@ -201,7 +201,6 @@ pub fn gen_complete_graph<T>(seed: T, n: usize) -> MatrixGraph
 where
     T: Into<Option<u64>>,
 {
-
     let mut graph = vec![vec![0; n]; n];
     let mut rng = match seed.into() {
         Some(seed) => WyRand::new_seed(seed),
@@ -210,12 +209,13 @@ where
 
     for (i, item) in graph.iter_mut().enumerate() {
         for (j, item) in item.iter_mut().enumerate() {
-            if i == j { continue; }
+            if i == j {
+                continue;
+            }
             *item = rng.generate_range(0..100);
         }
     }
 
-    
     for i in &graph {
         print!("[ ");
         for j in i {
@@ -231,20 +231,44 @@ where
 mod tests {
     use crate::{
         djikstra_array_pq_list_graph, djikstra_array_pq_matrix, djikstra_bheap_list_graph,
-        djikstra_bheap_matrix,
-        graph::{ListGraph, MatrixGraph}, gen_sparse_graph, gen_complete_graph,
+        djikstra_bheap_matrix, gen_complete_graph, gen_sparse_graph,
+        graph::{ListGraph, MatrixGraph},
     };
+
+    fn mat1() -> (Vec<Vec<u32>>, Vec<u32>) {
+        (
+            vec![
+                vec![0, 10, 5, 0, 0],
+                vec![0, 0, 2, 1, 0],
+                vec![0, 3, 0, 9, 2],
+                vec![0, 0, 0, 0, 4],
+                vec![0, 0, 0, 6, 0],
+            ],
+            vec![0, 8, 5, 9, 7],
+        )
+    }
+
+    fn mat2() -> (Vec<Vec<u32>>, Vec<u32>) {
+        (
+            vec![vec![0, 24, 0], vec![1, 0, 0], vec![0, 0, 0]],
+            vec![0, 24, u32::MAX],
+        )
+    }
+
+    fn mat3() -> (Vec<Vec<u32>>, Vec<u32>) {
+        (
+            vec![vec![0, 0, 0], vec![0, 0, 0], vec![0, 0, 0]],
+            vec![0, u32::MAX, u32::MAX],
+        )
+    }
+
+    fn all_graphs() -> Vec<(Vec<Vec<u32>>, Vec<u32>)> {
+        vec![mat1(), mat2(), mat3()]
+    }
 
     #[test]
     fn clone_graph() {
-        let mat = vec![
-            vec![0, 10, 5, 0, 0],
-            vec![0, 0, 2, 1, 0],
-            vec![0, 3, 0, 9, 2],
-            vec![0, 0, 0, 0, 4],
-            vec![0, 0, 0, 6, 0],
-        ];
-
+        let mat = mat1().0;
         let mat_graph = MatrixGraph::from(mat.clone());
         let list_graph = ListGraph::from(mat_graph.clone());
         let mat_g = MatrixGraph::from(list_graph);
@@ -253,58 +277,39 @@ mod tests {
 
     #[test]
     fn test_djikstra_bheap_matrix() {
-        let mat = vec![
-            vec![0, 10, 5, 0, 0],
-            vec![0, 0, 2, 1, 0],
-            vec![0, 3, 0, 9, 2],
-            vec![0, 0, 0, 0, 4],
-            vec![0, 0, 0, 6, 0],
-        ];
-        let mat_graph = MatrixGraph::from(mat);
-        let dist = djikstra_bheap_matrix(mat_graph, 0);
-        assert_eq!(vec![0, 8, 5, 9, 7], dist);
+        for (mat, res) in all_graphs() {
+            let mat_graph = MatrixGraph::from(mat);
+            let dist = djikstra_bheap_matrix(mat_graph, 0);
+            assert_eq!(res, dist);
+        }
     }
 
     #[test]
     fn test_djikstra_bheap_list() {
-        let mat = vec![
-            vec![0, 10, 5, 0, 0],
-            vec![0, 0, 2, 1, 0],
-            vec![0, 3, 0, 9, 2],
-            vec![0, 0, 0, 0, 4],
-            vec![0, 0, 0, 6, 0],
-        ];
-        let mat_graph = ListGraph::from(MatrixGraph::from(mat));
-        let dist = djikstra_bheap_list_graph(mat_graph, 0);
-        assert_eq!(vec![0, 8, 5, 9, 7], dist);
+        for (mat, res) in all_graphs() {
+            let mat_graph = ListGraph::from(MatrixGraph::from(mat));
+            let dist = djikstra_bheap_list_graph(mat_graph, 0);
+            assert_eq!(res, dist);
+        }
     }
 
     #[test]
     fn test_djikstra_array_pq_list() {
-        let mat = vec![
-            vec![0, 10, 5, 0, 0],
-            vec![0, 0, 2, 1, 0],
-            vec![0, 3, 0, 9, 2],
-            vec![0, 0, 0, 0, 4],
-            vec![0, 0, 0, 6, 0],
-        ];
-        let mat_graph = ListGraph::from(MatrixGraph::from(mat));
-        let dist = djikstra_array_pq_list_graph(mat_graph, 0);
-        assert_eq!(vec![0, 8, 5, 9, 7], dist);
+        for (mat, res) in all_graphs() {
+            let mat_graph = ListGraph::from(MatrixGraph::from(mat));
+            let dist = djikstra_array_pq_list_graph(mat_graph, 0);
+            assert_eq!(res, dist);
+        }
     }
 
     #[test]
     fn test_djikstra_array_pq_matrix() {
-        let mat = vec![
-            vec![0, 10, 5, 0, 0],
-            vec![0, 0, 2, 1, 0],
-            vec![0, 3, 0, 9, 2],
-            vec![0, 0, 0, 0, 4],
-            vec![0, 0, 0, 6, 0],
-        ];
-        let mat_graph = MatrixGraph::from(mat);
-        let dist = djikstra_array_pq_matrix(mat_graph, 0);
-        assert_eq!(vec![0, 8, 5, 9, 7], dist);
+        for (mat, res) in all_graphs() {
+            let mat_graph = MatrixGraph::from(mat);
+            let dist = djikstra_array_pq_matrix(mat_graph, 0);
+
+            assert_eq!(res, dist);
+        }
     }
 
     #[test]
