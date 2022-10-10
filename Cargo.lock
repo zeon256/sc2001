@@ -243,17 +243,15 @@ name = "lab2"
 version = "0.1.0"
 dependencies = [
  "criterion",
+ "mimalloc",
  "nanorand",
+ "sc2001",
  "serde",
  "serde_json",
 ]
 
 [[package]]
 name = "lab3"
-version = "0.1.0"
-
-[[package]]
-name = "lab4"
 version = "0.1.0"
 
 [[package]]
