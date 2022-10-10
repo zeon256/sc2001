@@ -245,6 +245,7 @@ dependencies = [
  "criterion",
  "mimalloc",
  "nanorand",
+ "num-traits",
  "sc2001",
  "serde",
  "serde_json",

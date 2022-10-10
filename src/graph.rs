@@ -1,8 +1,49 @@
+use std::cmp::Ordering;
+
 use num_traits::Zero;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Graph<T> {
     internal_repr: T,
+}
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub struct Edge<T>(pub T, pub usize);
+
+impl PartialOrd for Edge<u32> {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        match self.0.partial_cmp(&other.0) {
+            Some(core::cmp::Ordering::Equal) => {}
+            Some(Ordering::Greater) => return Some(Ordering::Less),
+            Some(Ordering::Less) => return Some(Ordering::Greater),
+            None => {},
+        }
+        self.1.partial_cmp(&other.1)
+    }
+}
+
+impl Ord for Edge<u32> {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.0.cmp(&other.0).reverse()
+    }
+}
+
+impl PartialOrd for Edge<u64> {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        match self.0.partial_cmp(&other.0) {
+            Some(core::cmp::Ordering::Equal) => {}
+            Some(Ordering::Greater) => return Some(Ordering::Less),
+            Some(Ordering::Less) => return Some(Ordering::Greater),
+            None => {},
+        }
+        self.1.partial_cmp(&other.1)
+    }
+}
+
+impl Ord for Edge<u64> {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.0.cmp(&other.0).reverse()
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -15,11 +56,11 @@ impl<T> Graph<AdjMatrix<T>>
 where
     T: Copy + Zero + PartialEq,
 {
-    pub fn neighbours(&self, vertex: usize) -> Vec<(usize, T)> {
+    pub fn neighbours(&self, vertex: usize) -> Vec<Edge<T>> {
         let mut buf = vec![];
         for (i, x) in self.internal_repr.0[vertex].iter().enumerate() {
             if *x != T::zero() {
-                buf.push((i, *x))
+                buf.push(Edge(*x, i))
             }
         }
 
@@ -64,7 +105,7 @@ impl<T> From<Vec<Vec<T>>> for Graph<AdjMatrix<T>> {
 
 #[cfg(test)]
 mod test {
-    use super::{AdjMatrix, Graph};
+    use super::{AdjMatrix, Graph, Edge};
 
     #[test]
     fn ui_test() {
@@ -76,5 +117,11 @@ mod test {
 
         let x = graph_adj_matrix.neighbours(1);
         dbg!(x);
+    }
+
+    #[test]
+    fn ordering() {
+        let (e, e1) = (Edge(2u32, 2), Edge(3, 4));
+        assert!(e > e1);
     }
 }
