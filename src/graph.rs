@@ -4,7 +4,7 @@ use num_traits::Zero;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Graph<T> {
-    internal_repr: T,
+    pub internal_repr: T,
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -47,7 +47,7 @@ impl Ord for Edge<u64> {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct AdjMatrix<T>(Vec<Vec<T>>);
+pub struct AdjMatrix<T>(pub Vec<Vec<T>>);
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct AdjList<T>(Vec<Vec<T>>);
@@ -96,6 +96,12 @@ impl<T> From<Vec<Vec<T>>> for Graph<AdjList<T>> {
 
 impl<T> From<Vec<Vec<T>>> for Graph<AdjMatrix<T>> {
     fn from(data: Vec<Vec<T>>) -> Self {
+        if data.len() == 0 {
+            return Self {
+                internal_repr: AdjMatrix(data)
+            }
+        }
+        
         assert!(data.len() == data[0].len());
         Self {
             internal_repr: AdjMatrix(data),

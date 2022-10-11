@@ -9,8 +9,34 @@ pub mod merge_sort;
 pub mod min_max_search;
 pub mod quicksort;
 pub mod union_find;
+
+use serde::{Deserialize, Serialize};
+use serde_json;
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Estimates {
+    pub mean: EstimateData,
+    pub median: EstimateData,
+    pub median_abs_dev: EstimateData,
+    pub std_dev: EstimateData,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct EstimateData {
+    pub confidence_interval: ConfidenceInterval,
+    pub point_estimate: f64,
+    pub standard_error: f64,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct ConfidenceInterval {
+    pub confidence_level: f64,
+    pub lower_bound: f64,
+    pub upper_bound: f64,
+}
+
 pub mod test_utils {
-    use nanorand::{WyRand, Rng};
+    use nanorand::{Rng, WyRand};
 
     pub fn gen_random_array<const N: usize, T>(seed: T) -> Vec<u32>
     where

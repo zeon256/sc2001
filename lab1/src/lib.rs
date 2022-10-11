@@ -8,30 +8,8 @@ pub mod test {
         io::{Read, Write},
     };
 
-    use serde::{Deserialize, Serialize};
-    use serde_json;
+    use sc2001::Estimates;
 
-    #[derive(Serialize, Deserialize, Debug)]
-    struct Estimates {
-        mean: EstimateData,
-        median: EstimateData,
-        median_abs_dev: EstimateData,
-        std_dev: EstimateData,
-    }
-
-    #[derive(Serialize, Deserialize, Debug)]
-    struct EstimateData {
-        confidence_interval: ConfidenceInterval,
-        point_estimate: f64,
-        standard_error: f64,
-    }
-
-    #[derive(Serialize, Deserialize, Debug)]
-    struct ConfidenceInterval {
-        confidence_level: f64,
-        lower_bound: f64,
-        upper_bound: f64,
-    }
  
     #[test]
     #[ignore]

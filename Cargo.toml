@@ -8,6 +8,8 @@ version = "0.1.0"
 mimalloc = {version = "*", default-features = false}
 num-traits = "0.2"
 nanorand = "0.7.0"
+serde = {version = "1.0.144", features = ["derive"]}
+serde_json = "1.0"
 
 [profile.release]
 codegen-units = 1
@@ -15,9 +17,6 @@ lto = true
 
 [dev-dependencies]
 criterion = "0.3"
-
-serde = {version = "1.0.144", features = ["derive"]}
-serde_json = "1.0"
 
 [features]
 default = []

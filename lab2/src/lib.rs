@@ -10,6 +10,23 @@ use sc2001::graph::Edge;
 pub mod array_pq;
 pub mod graph;
 
+#[derive(Debug, Clone)]
+pub struct DjikstraRunInfo {
+    pub distance: Vec<u32>,
+    pub predecessors: Vec<Option<usize>>,
+    pub visited: Vec<bool>,
+}
+
+impl DjikstraRunInfo {
+    pub fn new(distance: Vec<u32>, predecessors: Vec<Option<usize>>, visited: Vec<bool>) -> Self {
+        Self {
+            distance,
+            predecessors,
+            visited,
+        }
+    }
+}
+
 fn djikstra_setup<T>(sz_v: usize, src: usize) -> (Vec<u32>, Vec<Option<usize>>, Vec<bool>, T)
 where
     T: From<[Edge<u32>; 1]>,
@@ -31,7 +48,11 @@ where
 }
 
 #[rustfmt::skip]
-fn djikstra_bheap_list_graph(graph: ListGraph, src: usize) -> Vec<u32> {
+pub fn djikstra_bheap_list_graph(graph: ListGraph, src: usize) -> DjikstraRunInfo {
+    if graph.len() == 0 {
+        return DjikstraRunInfo::new(vec![], vec![], vec![]);
+    }
+
     let (
         mut distance,
         mut predecessors,
@@ -58,11 +79,15 @@ fn djikstra_bheap_list_graph(graph: ListGraph, src: usize) -> Vec<u32> {
             }
         }
     }
-    distance
+    DjikstraRunInfo::new(distance, predecessors, visited)
 }
 
 #[rustfmt::skip]
-fn djikstra_bheap_matrix(graph: MatrixGraph, src: usize) -> Vec<u32> {
+pub fn djikstra_bheap_matrix(graph: MatrixGraph, src: usize) -> DjikstraRunInfo {
+    if graph.len() == 0 {
+        return DjikstraRunInfo::new(vec![], vec![], vec![]);
+    }
+
     let (
         mut distance,
         mut predecessors,
@@ -89,11 +114,16 @@ fn djikstra_bheap_matrix(graph: MatrixGraph, src: usize) -> Vec<u32> {
             }
         }
     }
-    distance
+    
+    DjikstraRunInfo::new(distance, predecessors, visited)
 }
 
 #[rustfmt::skip]
-fn djikstra_array_pq_list_graph(graph: ListGraph, src: usize) -> Vec<u32> {
+pub fn djikstra_array_pq_list_graph(graph: ListGraph, src: usize) -> DjikstraRunInfo {
+    if graph.len() == 0 {
+        return DjikstraRunInfo::new(vec![], vec![], vec![]);
+    }
+
     let (
         mut distance,
         mut predecessors,
@@ -120,11 +150,16 @@ fn djikstra_array_pq_list_graph(graph: ListGraph, src: usize) -> Vec<u32> {
             }
         }
     }
-    distance
+    
+    DjikstraRunInfo::new(distance, predecessors, visited)
 }
 
 #[rustfmt::skip]
-fn djikstra_array_pq_matrix(graph: MatrixGraph, src: usize) -> Vec<u32> {
+pub fn djikstra_array_pq_matrix(graph: MatrixGraph, src: usize) -> DjikstraRunInfo {
+    if graph.len() == 0 {
+        return DjikstraRunInfo::new(vec![], vec![], vec![]);
+    }
+
     let (
         mut distance,
         mut predecessors,
@@ -151,87 +186,68 @@ fn djikstra_array_pq_matrix(graph: MatrixGraph, src: usize) -> Vec<u32> {
             }
         }
     }
-    distance
+    
+    DjikstraRunInfo::new(distance, predecessors, visited)
 }
 
-/// A graph with “closer to” |V| edges is considered sparse
-pub fn gen_sparse_graph<T>(seed: T, n: usize) -> MatrixGraph
+pub fn gen_graph<T>(seed: T, v: usize, e: usize) -> MatrixGraph
 where
     T: Into<Option<u64>>,
 {
-    let seed = seed.into();
-    let mut graph = vec![vec![0; n]; n];
-    let mut rng = match seed.clone() {
-        Some(seed) => WyRand::new_seed(seed),
-        None => WyRand::new(),
-    };
+    assert!(e <= usize::pow(v, 2));
+    let mut graph = vec![vec![0; v]; v];
 
-    let mut rng_2 = match seed.clone() {
-        Some(seed) => WyRand::new_seed(seed + 69),
-        None => WyRand::new(),
-    };
-
-    let mut rng_3 = match seed.clone() {
-        Some(seed) => WyRand::new_seed(seed + 69123),
-        None => WyRand::new(),
-    };
-
-    for _ in 0..n {
-        // generate random indexes
-        let (i, j) = (rng.generate_range(0..n), rng_2.generate_range(0..n));
-        // dont allow self loops
-        if i == j {
-            continue;
-        }
-        graph[i][j] = rng_3.generate_range(0..100);
-    }
-
-    for i in &graph {
-        print!("[ ");
-        for j in i {
-            print!("{} ", *j);
-        }
-        print!(" ]\n");
-    }
-
-    MatrixGraph::from(graph)
-}
-
-pub fn gen_complete_graph<T>(seed: T, n: usize) -> MatrixGraph
-where
-    T: Into<Option<u64>>,
-{
-    let mut graph = vec![vec![0; n]; n];
     let mut rng = match seed.into() {
         Some(seed) => WyRand::new_seed(seed),
         None => WyRand::new(),
     };
 
-    for (i, item) in graph.iter_mut().enumerate() {
-        for (j, item) in item.iter_mut().enumerate() {
-            if i == j {
-                continue;
-            }
-            *item = rng.generate_range(0..100);
+    let mut curr = 0;
+
+    while curr < e {
+        let (i, j) = (rng.generate_range(0..v), rng.generate_range(0..v));
+        if i == j {
+            continue;
         }
+        if graph[i][j] != 0 {
+            continue;
+        }
+        graph[i][j] = rng.generate_range(1..100);
+        curr += 1;
     }
 
-    for i in &graph {
-        print!("[ ");
-        for j in i {
-            print!("{} ", *j);
-        }
-        print!(" ]\n");
-    }
+    // for i in &graph {
+    //     print!("[ ");
+    //     for j in i {
+    //         print!("{} ", *j);
+    //     }
+    //     print!(" ]\n");
+    // }
 
     MatrixGraph::from(graph)
 }
 
+pub fn assert_graph_edge(x: &MatrixGraph, e: usize) {
+    let mut cnt = 0;
+    for i in 0..x.len() {
+        for j in 0..x.len() {
+            if x.0.internal_repr.0[i][j] != 0 {
+                cnt += 1;
+            }
+        }
+    }
+    assert_eq!(cnt, e);
+}
+
 #[cfg(test)]
 mod tests {
+    use std::{fs::File, io::{Read, Write}};
+
+    use sc2001::Estimates;
+
     use crate::{
-        djikstra_array_pq_list_graph, djikstra_array_pq_matrix, djikstra_bheap_list_graph,
-        djikstra_bheap_matrix, gen_complete_graph, gen_sparse_graph,
+        assert_graph_edge, djikstra_array_pq_list_graph, djikstra_array_pq_matrix,
+        djikstra_bheap_list_graph, djikstra_bheap_matrix, gen_graph,
         graph::{ListGraph, MatrixGraph},
     };
 
@@ -262,8 +278,12 @@ mod tests {
         )
     }
 
+    fn mat4() -> (Vec<Vec<u32>>, Vec<u32>) {
+        (vec![], vec![])
+    }
+
     fn all_graphs() -> Vec<(Vec<Vec<u32>>, Vec<u32>)> {
-        vec![mat1(), mat2(), mat3()]
+        vec![mat1(), mat2(), mat3(), mat4()]
     }
 
     #[test]
@@ -280,7 +300,7 @@ mod tests {
         for (mat, res) in all_graphs() {
             let mat_graph = MatrixGraph::from(mat);
             let dist = djikstra_bheap_matrix(mat_graph, 0);
-            assert_eq!(res, dist);
+            assert_eq!(res, dist.distance);
         }
     }
 
@@ -289,7 +309,7 @@ mod tests {
         for (mat, res) in all_graphs() {
             let mat_graph = ListGraph::from(MatrixGraph::from(mat));
             let dist = djikstra_bheap_list_graph(mat_graph, 0);
-            assert_eq!(res, dist);
+            assert_eq!(res, dist.distance);
         }
     }
 
@@ -298,7 +318,7 @@ mod tests {
         for (mat, res) in all_graphs() {
             let mat_graph = ListGraph::from(MatrixGraph::from(mat));
             let dist = djikstra_array_pq_list_graph(mat_graph, 0);
-            assert_eq!(res, dist);
+            assert_eq!(res, dist.distance);
         }
     }
 
@@ -308,17 +328,87 @@ mod tests {
             let mat_graph = MatrixGraph::from(mat);
             let dist = djikstra_array_pq_matrix(mat_graph, 0);
 
-            assert_eq!(res, dist);
+            assert_eq!(res, dist.distance);
         }
     }
 
     #[test]
-    fn test_generate_sparse_graph() {
-        gen_sparse_graph(42069, 20);
+    fn generate_graph() {
+        let x = gen_graph(42069, 20, 20);
+        assert_graph_edge(&x, 20);
+        let x = gen_graph(42069, 10, 20);
+        assert_graph_edge(&x, 20);
+        let x = gen_graph(42069, 5, 20);
+        assert_graph_edge(&x, 20);
     }
 
+    #[ignore]
     #[test]
-    fn test_generate_complete_graph() {
-        gen_complete_graph(42069, 20);
+    fn compile_density_test() {
+        let mut all_estimates = String::from(
+                "e,v,bheap_list_graph_mean,bheap_matrix_graph_mean,array_pq_list_graph_mean,array_pq_matrix_graph\n");
+        for e in (100..=9900).step_by(100) {
+            let v = 100;
+
+            let benches = [
+                format!("djikstra_bheap_list_graph(e_{},v_{})", e, v),
+                format!("djikstra_bheap_matrix_graph(e_{},v_{})", e, v),
+                format!("djikstra_array_pq_list_graph(e_{},v_{})", e, v),
+                format!("djikstra_array_pq_matrix_graph(e_{},v_{})", e, v),
+            ];
+
+            all_estimates.push_str(&format!("{e},{v},"));
+
+            for b in benches {
+                let mut buf = String::new();
+                let file_name = format!("density_test/criterion/{b}/new/estimates.json");
+                dbg!(&file_name);
+                let mut f = File::open(file_name).unwrap();
+                let _ = f.read_to_string(&mut buf).unwrap();
+                let estimates = serde_json::from_str::<Estimates>(&buf).unwrap();
+                let mean = estimates.mean.point_estimate / 1000.0;
+                all_estimates.push_str(&format!("{mean},"));
+            }
+            all_estimates.push_str("\n");
+        }
+        
+        let mut density_test = File::create("density_test.csv").unwrap();
+        density_test.write_all(all_estimates.as_bytes()).unwrap();
+    }
+    
+    #[ignore]
+    #[test]
+    fn compile_stress_test() {
+        let mut all_estimates = String::from(
+                "e,v,bheap_list_graph_mean,bheap_matrix_graph_mean,array_pq_list_graph_mean,array_pq_matrix_graph\n");
+                
+        for v in (0..=1000).step_by(20) {
+
+            let e = usize::pow(v, 2) - v;
+            let benches = [
+                format!("complete_graph_djikstra_bheap_list_graph(e_{},v_{})", e, v),
+                format!("complete_graph_djikstra_bheap_matrix_graph(e_{},v_{})", e, v),
+                format!("complete_graph_djikstra_array_pq_list_graph(e_{},v_{})", e, v),
+                format!("complete_graph_djikstra_array_pq_matrix_graph(e_{},v_{})", e, v),
+            ];
+
+            all_estimates.push_str(&format!("{e},{v},"));
+
+            for b in benches {
+                let mut buf = String::new();
+                let file_name = format!("stress_test/criterion/{b}/new/estimates.json");
+                dbg!(&file_name);
+                let mut f = File::open(file_name).unwrap();
+                let _ = f.read_to_string(&mut buf).unwrap();
+                let estimates = serde_json::from_str::<Estimates>(&buf).unwrap();
+                let mean = estimates.mean.point_estimate / 1000.0;
+                all_estimates.push_str(&format!("{mean},"));
+            }
+            
+            all_estimates.push_str("\n");
+        }
+        
+        let mut density_test = File::create("stress_test.csv").unwrap();
+        density_test.write_all(all_estimates.as_bytes()).unwrap();
     }
 }
