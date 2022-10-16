@@ -47,20 +47,23 @@ pub fn prims(graph: ListGraph, src: usize) -> Option<MstInfo<u32>> {
         }
 
         // #[cfg(debug_assertions)]
-        // println!("Adding: {:?}", Edge(weight, vertex));
+        println!("S: {:?}", visited);
+        println!("Predecessor: {:?}", predecessors);
+        println!("Distance: {:?}\n", distance);
 
         visited[vertex] = true;
         min_cost += weight;
         no_visited += 1;
         predecessors[vertex] = predecessor;
-        if let Some(predecessor_dist_idx) = predecessor {
-            distance[vertex] = distance[predecessor_dist_idx] + weight;
+
+        if let Some(_) = predecessor {
+            distance[vertex] = weight;
         }
 
         for Edge(weight, neighbour) in graph.neighbours(vertex) {
             if !visited[*neighbour] {
                 pq.push(Reverse((*weight, *neighbour, Some(vertex))));
-                // println!("Setting predecessor for: {} to {}", *neighbour, vertex);
+                predecessors[*neighbour] = Some(vertex);
             }
         }
     }
