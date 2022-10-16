@@ -9,9 +9,10 @@ pub mod merge_sort;
 pub mod min_max_search;
 pub mod quicksort;
 pub mod union_find;
+pub mod prims;
+pub mod kruskal;
 
 use serde::{Deserialize, Serialize};
-use serde_json;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Estimates {

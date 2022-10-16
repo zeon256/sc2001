@@ -1,10 +1,29 @@
-use std::cmp::Ordering;
+use std::{cmp::Ordering, fmt::Debug};
 
 use num_traits::Zero;
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Clone, PartialEq)]
 pub struct Graph<T> {
     pub internal_repr: T,
+}
+
+impl<T: Debug> Debug for Graph<AdjList<T>> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut s = String::from("ListGraph\n");
+
+        for (i, t) in self.internal_repr.0.iter().enumerate() {
+            s.push_str(&format!("{i} -> "));
+            for (j, k) in t.iter().enumerate() {
+                s.push_str(&format!("{:?}", *k));
+                if j != t.len() - 1 {
+                    s.push_str(&format!(" -> "));
+                }
+            }
+            s.push('\n');
+        }
+
+        f.write_str(s.as_str())
+    }
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -16,7 +35,7 @@ impl PartialOrd for Edge<u32> {
             Some(core::cmp::Ordering::Equal) => {}
             Some(Ordering::Greater) => return Some(Ordering::Less),
             Some(Ordering::Less) => return Some(Ordering::Greater),
-            None => {},
+            None => {}
         }
         self.1.partial_cmp(&other.1)
     }
@@ -34,7 +53,7 @@ impl PartialOrd for Edge<u64> {
             Some(core::cmp::Ordering::Equal) => {}
             Some(Ordering::Greater) => return Some(Ordering::Less),
             Some(Ordering::Less) => return Some(Ordering::Greater),
-            None => {},
+            None => {}
         }
         self.1.partial_cmp(&other.1)
     }
@@ -94,14 +113,25 @@ impl<T> From<Vec<Vec<T>>> for Graph<AdjList<T>> {
     }
 }
 
+impl<T, const N: usize> From<[Vec<T>; N]> for Graph<AdjList<T>>
+where
+    T: Clone,
+{
+    fn from(data: [Vec<T>; N]) -> Self {
+        Self {
+            internal_repr: AdjList(data.to_vec()),
+        }
+    }
+}
+
 impl<T> From<Vec<Vec<T>>> for Graph<AdjMatrix<T>> {
     fn from(data: Vec<Vec<T>>) -> Self {
         if data.len() == 0 {
             return Self {
-                internal_repr: AdjMatrix(data)
-            }
+                internal_repr: AdjMatrix(data),
+            };
         }
-        
+
         assert!(data.len() == data[0].len());
         Self {
             internal_repr: AdjMatrix(data),
@@ -111,15 +141,12 @@ impl<T> From<Vec<Vec<T>>> for Graph<AdjMatrix<T>> {
 
 #[cfg(test)]
 mod test {
-    use super::{AdjMatrix, Graph, Edge};
+    use super::{AdjMatrix, Edge, Graph};
 
     #[test]
     fn ui_test() {
-        let graph_adj_matrix = Graph::<AdjMatrix<i32>>::from(vec![
-            vec![1, 0, 0],
-            vec![0, 1, 1],
-            vec![0, 1, 1],
-        ]);
+        let graph_adj_matrix =
+            Graph::<AdjMatrix<i32>>::from(vec![vec![1, 0, 0], vec![0, 1, 1], vec![0, 1, 1]]);
 
         let x = graph_adj_matrix.neighbours(1);
         dbg!(x);
