@@ -9,6 +9,7 @@ pub mod merge_sort;
 pub mod min_max_search;
 pub mod quicksort;
 pub mod union_find;
+pub mod lcs;
 
 use serde::{Deserialize, Serialize};
 use serde_json;
