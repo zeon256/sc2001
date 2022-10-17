@@ -10,6 +10,9 @@ pub mod min_max_search;
 pub mod quicksort;
 pub mod union_find;
 pub mod lcs;
+pub mod kruskal;
+pub mod prims;
+
 
 use serde::{Deserialize, Serialize};
 
