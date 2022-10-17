@@ -7,6 +7,12 @@ pub struct Graph<T> {
     pub internal_repr: T,
 }
 
+impl<T: Debug> Debug for Graph<AdjMatrix<T>> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Graph").field("internal_repr", &self.internal_repr).finish()
+    }
+}
+
 impl<T: Debug> Debug for Graph<AdjList<T>> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut s = String::from("ListGraph\n");
@@ -69,7 +75,7 @@ impl Ord for Edge<u64> {
 pub struct AdjMatrix<T>(pub Vec<Vec<T>>);
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct AdjList<T>(Vec<Vec<T>>);
+pub struct AdjList<T>(pub Vec<Vec<T>>);
 
 impl<T> Graph<AdjMatrix<T>>
 where
@@ -100,6 +106,7 @@ impl<T> Graph<AdjList<T>> {
         self.internal_repr.0[vertex].as_mut_slice()
     }
 
+    #[inline]
     pub fn len(&self) -> usize {
         self.internal_repr.0.len()
     }

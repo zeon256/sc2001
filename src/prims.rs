@@ -1,5 +1,5 @@
 use crate::graph::{AdjList, Edge, Graph};
-use std::{collections::BinaryHeap, cmp::Reverse};
+use std::{cmp::Reverse, collections::BinaryHeap};
 
 type ListGraph = Graph<AdjList<Edge<u32>>>;
 #[derive(Debug, Clone)]
@@ -78,7 +78,7 @@ pub fn prims(graph: ListGraph, src: usize) -> Option<MstInfo<u32>> {
 #[cfg(test)]
 mod tests {
     use crate::{
-        graph::{AdjList, AdjMatrix, Edge, Graph},
+        graph::Edge,
         prims::{prims, ListGraph},
     };
 
@@ -94,7 +94,7 @@ mod tests {
     pub fn prims_test() {
         let adj_list = [
             vec![Edge(10, 1), Edge(1, 2), Edge(4, 3)],
-            vec![Edge(10, 0), Edge(3, 2), Edge(1, 3)],
+            vec![Edge(10, 0), Edge(3, 2), Edge(1, 4)],
             vec![Edge(1, 0), Edge(2, 3), Edge(8, 5), Edge(3, 1)],
             vec![Edge(4, 0), Edge(2, 2), Edge(2, 5), Edge(7, 6)],
             vec![Edge(1, 1), Edge(1, 5), Edge(8, 7)],
