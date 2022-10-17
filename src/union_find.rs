@@ -41,7 +41,7 @@ macro_rules! generate_wqu_uf_impl {
                     id: (0..n).collect(),
                     phantom: PhantomData::default(),
                     count: n as usize,
-                    tree_sz: vec![1; n as usize]
+                    rank: vec![1; n as usize]
                 }
             }
 
@@ -62,12 +62,12 @@ macro_rules! generate_wqu_uf_impl {
                     return;
                 }
 
-                if self.tree_sz[root_p as usize] < self.tree_sz[root_q as usize] {
+                if self.rank[root_p as usize] < self.rank[root_q as usize] {
                     self.id[root_p as usize] = root_q;
-                    self.tree_sz[root_q as usize] += self.tree_sz[root_p as usize];
+                    self.rank[root_q as usize] += self.rank[root_p as usize];
                 } else {
                     self.id[root_q as usize] = root_p;
-                    self.tree_sz[root_p as usize] += self.tree_sz[root_q as usize];
+                    self.rank[root_p as usize] += self.rank[root_q as usize];
                 }
 
                 self.count -= 1;
@@ -123,7 +123,7 @@ macro_rules! generate_uf_constructor_impl {
                     id: (0..n).collect(),
                     phantom: PhantomData::default(),
                     count: n as usize,
-                    tree_sz: PhantomData::default()
+                    rank: PhantomData::default()
                 }
             }
         }
@@ -150,10 +150,10 @@ pub struct WeightedQuickUnion;
 pub struct WQupc;
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
-pub struct UnionFind<A, T, U = PhantomData<T>> {
-    id: Vec<T>,
+pub struct UnionFind<A, T, RankContainer = PhantomData<()>> {
+    pub id: Vec<T>,
     pub count: usize,
-    tree_sz: U,
+    pub rank: RankContainer,
     phantom: PhantomData<A>,
 }
 
